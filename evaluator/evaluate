@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+import argparse
+from itertools import islice
+
+def word_matches(h,ref):
+    return sum(1 for w in h if w in ref)
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Evaluate translatiion hypotheses.')
+    parser.add_argument('-i','--input',dest="input",default='data/hyp1-hyp2-ref',help='input file (default data/hyp1-hyp2-ref)' )
+    parser.add_argument('-n','--num_sentences',dest="num_sentences",default=None,type=int,help='Number of hypothesis pairs to evaluate')
+
+    opts = parser.parse_args()
+
+    def sentences():
+        with open(opts.input) as f:
+            for pair in f:
+                yield [ sentence.strip().split() for sentence in pair.split('|||') ]
+    for hp1,hp2,ref in islice(sentences(),opts.num_sentences):
+        sref = set(ref)
+        h1_match = word_matches(hp1,sref)
+        h2_match = word_matches(hp2,sref)
+        print (1 if h1_match > h2_match else ( 0  if h1_match == h2_match else -1 ))
+
+if __name__ == '__main__':
+    main()
+

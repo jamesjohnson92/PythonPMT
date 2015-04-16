@@ -31,6 +31,7 @@ class LM:
         return ((), score + self.table[('<unk>',)].logprob)
 
     def end(self,state):
+        print self.score(state,"</s>")
         return self.score(state,"</s>")[1]
 
 

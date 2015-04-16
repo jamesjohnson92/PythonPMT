@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+import argparse
+import sys
+
+parse = argparse.ArgumentParser()
+parse.add_argument("-i","--input",dest="input",default="data/hyp1-hyp2-ref",help="Input file (default data/hyp1-hyp2-ref)")
+opts =  parse.parse_args()
+
+f = open(opts.input)
+
+for (n,(f_e_e,y)) in enumerate(zip(f,sys.stdin)):
+    try:
+        ny = int(y)
+        if ny < -1 or ny > 1:
+            sys.stderr.write("ERROR (%s): Sentence %d predicted judgement %d is invalid\n" %(sys.argv[0],n,ny))
+            sys.exit(1)
+        pass
+    except (Exception):
+        sys.stderr.write("ERROR (%s) line %d is not formatted correctly:\n %s" %(sys.argv[0],n,y))
+        sys.stderr.write("Lines can contain values such as {-1,0,1}")
+        sys.exit(1)
+    sys.stdout.write(y)
+
+warned = False
+for y in (sys.stdin):
+    if not warned:
+        sys.stderr.write("Warning (%s) prediction file is longer than input"%(sys.argv[0]))
+        warned = True
+    sys.stdout.write(y)
+
+try:
+    if (f.next()):
+        sys.stderr.write("Warning Prediction is longer than input file")
+except (StopIteration):
+    pass
+
+

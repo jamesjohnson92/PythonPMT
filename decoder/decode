@@ -34,7 +34,7 @@ for word in set(sum(french,())):
 
 
 
-sys.stderr.write("Decoding starts for input %s....."%(opts.input))  
+sys.stderr.write("Decoding starts for input %s.....\n"%(opts.input))  
 
 for f in french:
 
@@ -48,7 +48,7 @@ for f in french:
 
     for i,stack in enumerate(stacks[:-1]):
         for h in sorted(stack.itervalues(),key = lambda h : -h.logprob)[:opts.prune]:
-            for j in xrange(i+1, len(f)+1):
+            for j in xrange(i+1,len(f)+1):
                 if f[i:j] in tm:
                     for phrase in tm[f[i:j]]:
                         logprob = h.logprob + phrase.logprob
@@ -61,6 +61,7 @@ for f in french:
                     if lm_state not in stacks[j] or stacks[j][lm_state].logprob < logprob:
                         stacks[j][lm_state] = new_hypothesis
     winner = max(stacks[-1].itervalues() , key = lambda h : h.logprob )
+    
     def extract_english(h):
         return "" if h.precedence is None else "%s%s" %(extract_english(h.precedence),h.phrase.english)
     print extract_english(winner)
